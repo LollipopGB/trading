@@ -10,6 +10,9 @@ on:
     - cron: "0 20 * * 1-5"
   workflow_dispatch:  # allows manual trigger from GitHub UI
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   run-alerts:
     runs-on: ubuntu-latest
@@ -27,7 +30,7 @@ jobs:
         run: pip install yfinance pandas pandas-ta python-dotenv requests google-auth google-auth-oauthlib google-api-python-client
 
       - name: Write Gmail token
-        run: echo "${{ secrets.GMAIL_TOKEN_JSON }}" | base64 --decode > token.json
+        run: echo "Aqui deberia ir lo de gmail" #echo "${{ secrets.GMAIL_TOKEN_JSON }}" | base64 --decode > token.json
 
       - name: Run alert script
         env:
