@@ -1,0 +1,40 @@
+name: TradingView Alerts
+
+on:
+  schedule:
+    # Run every 15 min during US pre-market + regular + after-hours (ET = UTC-4/5)
+    # Pre-market:  04:00–09:30 ET  →  08:00–13:30 UTC
+    # Regular:     09:30–16:00 ET  →  13:30–20:00 UTC
+    # After-hours: 16:00–20:00 ET  →  20:00–00:00 UTC
+    - cron: "*/15 8-23 * * 1-5"   # Mon–Fri, 08:00–23:59 UTC (covers all sessions)
+  workflow_dispatch:               # manual trigger from GitHub UI
+
+jobs:
+  run-alerts:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run alert script
+        env:
+          APIFY_TOKEN:          ${{ secrets.APIFY_TOKEN }}
+          EMAIL_SENDER:         ${{ secrets.EMAIL_SENDER }}
+          EMAIL_PASSWORD:       ${{ secrets.EMAIL_PASSWORD }}
+          EMAIL_RECIPIENT:      ${{ secrets.EMAIL_RECIPIENT }}
+          GITHUB_TOKEN:         ${{ secrets.GITHUB_TOKEN }}   # auto-provided by Actions
+          GIST_ID:              ${{ secrets.GIST_ID }}        # set after first run
+          PCT_CHANGE_THRESHOLD: "3.0"
+          RSI_OVERBOUGHT:       "70"
+          RSI_OVERSOLD:         "30"
+          COOLDOWN_SEC:         "300"
+        run: python tradingview_apify_alerts.py

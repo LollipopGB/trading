@@ -1,0 +1,6 @@
+apify-client>=1.7
+yfinance>=0.2.40
+pandas>=2.0
+pandas-ta>=0.3.14b
+python-dotenv>=1.0
+requests>=2.31
